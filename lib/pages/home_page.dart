@@ -29,7 +29,8 @@ class HomePageState extends State<HomePage> {
   HomePageState({Key? key});
 
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final ScrollController listScrollController = ScrollController();
 
@@ -89,7 +90,8 @@ class HomePageState extends State<HomePage> {
     firebaseMessaging.getToken().then((token) {
       print('push token: $token');
       if (token != null) {
-        homeProvider.updateDataFirestore(FirestoreConstants.pathUserCollection, currentUserId, {'pushToken': token});
+        homeProvider.updateDataFirestore(FirestoreConstants.pathUserCollection,
+            currentUserId, {'pushToken': token});
       }
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
@@ -97,15 +99,18 @@ class HomePageState extends State<HomePage> {
   }
 
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void scrollListener() {
-    if (listScrollController.offset >= listScrollController.position.maxScrollExtent &&
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
         !listScrollController.position.outOfRange) {
       setState(() {
         _limit += _limitIncrement;
@@ -117,13 +122,17 @@ class HomePageState extends State<HomePage> {
     if (choice.title == 'Log out') {
       handleSignOut();
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SettingsPage()));
     }
   }
 
   void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      Platform.isAndroid
+          ? 'com.dfa.flutterchatdemo'
+          : 'com.duytq.flutterchatdemo',
       'Flutter chat demo',
       'your channel description',
       playSound: true,
@@ -131,9 +140,11 @@ class HomePageState extends State<HomePage> {
       importance: Importance.max,
       priority: Priority.high,
     );
-    IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+        IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
 
     print(remoteNotification);
 
@@ -157,7 +168,8 @@ class HomePageState extends State<HomePage> {
         builder: (BuildContext context) {
           return SimpleDialog(
             clipBehavior: Clip.hardEdge,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: EdgeInsets.zero,
             children: <Widget>[
               Container(
@@ -176,7 +188,10 @@ class HomePageState extends State<HomePage> {
                     ),
                     Text(
                       'Exit app',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Are you sure to exit app?',
@@ -200,7 +215,9 @@ class HomePageState extends State<HomePage> {
                     ),
                     Text(
                       'Cancel',
-                      style: TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: ColorConstants.primaryColor,
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -220,7 +237,9 @@ class HomePageState extends State<HomePage> {
                     ),
                     Text(
                       'Yes',
-                      style: TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: ColorConstants.primaryColor,
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -263,13 +282,18 @@ class HomePageState extends State<HomePage> {
                 buildSearchBar(),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: homeProvider.getStreamFireStore(FirestoreConstants.pathUserCollection, _limit, _textSearch),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    stream: homeProvider.getStreamFireStore(
+                        FirestoreConstants.pathUserCollection,
+                        _limit,
+                        _textSearch),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasData) {
                         if ((snapshot.data?.docs.length ?? 0) > 0) {
                           return ListView.builder(
                             padding: EdgeInsets.all(10),
-                            itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
+                            itemBuilder: (context, index) =>
+                                buildItem(context, snapshot.data?.docs[index]),
                             itemCount: snapshot.data?.docs.length,
                             controller: listScrollController,
                           );
@@ -281,7 +305,7 @@ class HomePageState extends State<HomePage> {
                       } else {
                         return Center(
                           child: CircularProgressIndicator(
-                            color: ColorConstants.themeColor,
+                            backgroundColor: ColorConstants.themeColor,
                           ),
                         );
                       }
@@ -331,7 +355,8 @@ class HomePageState extends State<HomePage> {
               },
               decoration: InputDecoration.collapsed(
                 hintText: 'Search nickname (you have to type exactly string)',
-                hintStyle: TextStyle(fontSize: 13, color: ColorConstants.greyColor),
+                hintStyle:
+                    TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
               style: TextStyle(fontSize: 13),
             ),
@@ -348,7 +373,8 @@ class HomePageState extends State<HomePage> {
                             _textSearch = "";
                           });
                         },
-                        child: Icon(Icons.clear_rounded, color: ColorConstants.greyColor, size: 20))
+                        child: Icon(Icons.clear_rounded,
+                            color: ColorConstants.greyColor, size: 20))
                     : SizedBox.shrink();
               }),
         ],
@@ -406,17 +432,21 @@ class HomePageState extends State<HomePage> {
                           fit: BoxFit.cover,
                           width: 50,
                           height: 50,
-                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
                               width: 50,
                               height: 50,
                               child: Center(
                                 child: CircularProgressIndicator(
-                                  color: ColorConstants.themeColor,
-                                  value: loadingProgress.expectedTotalBytes != null &&
-                                          loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  backgroundColor: ColorConstants.themeColor,
+                                  value: loadingProgress.expectedTotalBytes !=
+                                              null &&
+                                          loadingProgress.expectedTotalBytes !=
+                                              null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
                               ),
@@ -446,7 +476,8 @@ class HomePageState extends State<HomePage> {
                           child: Text(
                             'Nickname: ${userChat.nickname}',
                             maxLines: 1,
-                            style: TextStyle(color: ColorConstants.primaryColor),
+                            style:
+                                TextStyle(color: ColorConstants.primaryColor),
                           ),
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(10, 0, 0, 5),
@@ -455,7 +486,8 @@ class HomePageState extends State<HomePage> {
                           child: Text(
                             'About me: ${userChat.aboutMe}',
                             maxLines: 1,
-                            style: TextStyle(color: ColorConstants.primaryColor),
+                            style:
+                                TextStyle(color: ColorConstants.primaryColor),
                           ),
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -483,7 +515,8 @@ class HomePageState extends State<HomePage> {
               );
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(ColorConstants.greyColor2),
               shape: MaterialStateProperty.all<OutlinedBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
